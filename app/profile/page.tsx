@@ -1,4 +1,5 @@
 import { auth, signIn, signOut } from "@/app/auth";
+import { Button } from "@radix-ui/themes";
 
 const SignInWithButton = ({ provider }: { provider: string }) => (
   <form
@@ -27,9 +28,9 @@ export default async function SignIn() {
           await signOut();
         }}
       >
-        <button type="submit" className="btn btn-primary">
+        <Button type="submit" className="btn btn-primary">
           Sign Out
-        </button>
+        </Button>
       </form>
     </>
   ) : (

@@ -1,13 +1,11 @@
+import SignupPage from "../auth/page";
 
-
-import React from "react";
-
-const page = () => {
+const rooPage = () => {
   return (
-    <h1
-      className="text-2xl text-center mt-4"> home</h1>
-
+    <>
+      <h1 className="text-2xl p-2"></h1>
+    </>
   );
 };
 
-export default page;
+export default rooPage;
