@@ -1,4 +1,4 @@
-import SignupPage from "../auth/page";
+import SignupPage from "../auth/signup/page";
 
 const rooPage = () => {
   return (

@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import { auth, signOut, signIn } from "@/app/auth";
-import { DropdownMenu, Button } from "@radix-ui/themes";
+import { auth, signOut } from "@/app/auth";
+import { Button } from "@radix-ui/themes";
 import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 const Navbar = () => {
   const [session, setSession] = useState();
 
@@ -34,6 +34,16 @@ const Navbar = () => {
           <Link href="/main/contact" className="text-lg font-semibold">
             Contact
           </Link>
+          <Link href="/" className="text-lg font-semibold">
+            Home
+          </Link>
+          <Link href="/main/about" className="text-lg font-semibold">
+            About
+          </Link>
+
+          <Link href="/main/contact" className="text-lg font-semibold">
+            Contact
+          </Link>
         </ul>
 
         <div>
@@ -52,28 +62,12 @@ const Navbar = () => {
             </>
           ) : (
             <div className="flex space-x-5 cursor-pointer">
-              <Link href="">
+              <Link href="/auth/signup">
                 <Button variant="soft">Sign up</Button>
               </Link>
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger>
-                  <Button variant="soft">Login</Button>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content>
-                  <div className="flex flex-col space-y-2 cursor-pointer">
-                    <Link href="">
-                      <Button color="green" onSelect={() => signIn("github")}>
-                        Login with Github
-                      </Button>
-                    </Link>
-                    <Link href="">
-                      <Button onSelect={() => signIn("google")}>
-                        Login with Google
-                      </Button>
-                    </Link>
-                  </div>
-                </DropdownMenu.Content>
-              </DropdownMenu.Root>
+              <Link href="/auth/loginForm">
+                <Button variant="soft">Login</Button>
+              </Link>
             </div>
           )}
         </div>

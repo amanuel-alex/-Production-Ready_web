@@ -4,7 +4,7 @@ import { FaTwitter, FaGithub, FaLinkedin, FaInstagram } from "react-icons/fa";
 
 const FooterPage = () => {
   return (
-    <footer className="bg-slate-800 text-white py-8 px-4 sm:px-6 lg:px-8">
+    <footer className="bg-[#123456] text-white py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Logo and Links */}
@@ -77,7 +77,7 @@ const FooterPage = () => {
                 href="https://twitter.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-2xl text-gray-300 hover:text-white transition-colors duration-300"
+                className="text-2xl text-gray-300 hover:text-green-400 transition-colors duration-300"
               >
                 <FaTwitter />
               </a>
@@ -85,7 +85,7 @@ const FooterPage = () => {
                 href="https://github.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-2xl text-gray-300 hover:text-white transition-colors duration-300"
+                className="text-2xl text-gray-300 hover:text-green-400 transition-colors duration-300"
               >
                 <FaGithub />
               </a>
@@ -93,7 +93,7 @@ const FooterPage = () => {
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-2xl text-gray-300 hover:text-white transition-colors duration-300"
+                className="text-2xl text-gray-300 hover:text-green-400  transition-colors duration-300"
               >
                 <FaLinkedin />
               </a>
@@ -101,7 +101,7 @@ const FooterPage = () => {
                 href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-2xl text-gray-300 hover:text-white transition-colors duration-300"
+                className="text-2xl text-gray-300 hover:text-green-400  transition-colors duration-300"
               >
                 <FaInstagram />
               </a>
