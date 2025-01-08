@@ -75,7 +75,7 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-white text-gray-900">
+    <div className="bg-green-800 text-gray-900">
       {/* First Section - H1 Text, "Explore More" Button, and 100vh Height */}
       <section className="h-screen bg-gray-50 text-center flex flex-col justify-center items-center relative">
         <h1 className="text-5xl font-extrabold text-gray-800">

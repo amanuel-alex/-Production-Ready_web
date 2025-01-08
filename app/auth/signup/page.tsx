@@ -2,30 +2,33 @@
 
 import { useState } from "react";
 import Link from "next/link";
-export default function SignUp() {
-  const [fullName, setFullName] = useState("");
+
+const SignUp = () => {
+  const [username, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<{
-    fullName?: string;
+    username?: string;
     email?: string;
     password?: string;
     confirmPassword?: string;
   }>({});
+  const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formErrors: {
-      fullName?: string;
+      username?: string;
       email?: string;
       password?: string;
       confirmPassword?: string;
     } = {};
 
     // Validation
-    if (!fullName) formErrors.fullName = "Full Name is required";
+    if (!username) formErrors.username = "Full Name is required";
     if (!email) formErrors.email = "Email is required";
     if (!password) formErrors.password = "Password is required";
     if (password !== confirmPassword)
@@ -36,8 +39,39 @@ export default function SignUp() {
       return;
     }
 
-    // Form submission logic (e.g., API call)
-    console.log("Form submitted");
+    setLoading(true);
+    setServerError(null);
+
+    // Send request to the API route
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          password,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        // Successfully created user, redirect or show success message
+        console.log("User created", data);
+        // Optionally, you can redirect to the login page or show a success message
+      } else {
+        // Handle errors from the API
+        setServerError(data.error || "Something went wrong");
+      }
+    } catch (error) {
+      setServerError("Error connecting to the server");
+      console.error("Error submitting form", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -46,24 +80,27 @@ export default function SignUp() {
         <h2 className="text-3xl font-semibold text-center text-gray-800">
           Sign Up
         </h2>
+        {serverError && (
+          <p className="text-red-500 text-center">{serverError}</p>
+        )}
         <form onSubmit={handleSubmit} className="mt-6 space-y-6">
           {/* Full Name */}
           <div>
             <label
-              htmlFor="fullName"
+              htmlFor="username"
               className="block text-sm font-medium text-gray-600"
             >
               Full Name
             </label>
             <input
-              id="fullName"
+              id="username"
               type="text"
-              value={fullName}
+              value={username}
               onChange={(e) => setFullName(e.target.value)}
               className="mt-1 block w-full px-4 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
-            {errors.fullName && (
-              <p className="text-sm text-red-500">{errors.fullName}</p>
+            {errors.username && (
+              <p className="text-sm text-red-500">{errors.username}</p>
             )}
           </div>
 
@@ -132,16 +169,23 @@ export default function SignUp() {
             <button
               type="submit"
               className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-300"
+              disabled={loading}
             >
-              Sign Up
+              {loading ? "Signing Up..." : "Sign Up"}
             </button>
+            <div className="mt-4 text-center">
+              <Link
+                href="/auth/loginForm"
+                className="text-blue-600 hover:text-blue-800"
+              >
+                Already have an account? Login
+              </Link>
+            </div>
           </div>
-          <Link
-            href="/auth/loginForm"
-            className="text-sm text-blue-600 hover:text-blue-800"
-          ></Link>
         </form>
       </div>
     </div>
   );
-}
+};
+
+export default SignUp;
