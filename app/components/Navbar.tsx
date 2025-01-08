@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { auth, signOut, signIn } from "@/app/auth";
 import { DropdownMenu, Button } from "@radix-ui/themes";
-
+import Image from "next/image";
 const Navbar = () => {
   const [session, setSession] = useState();
 
@@ -19,15 +19,19 @@ const Navbar = () => {
   return (
     <header className="px-5 py-3 shadow-sm bg-slate-100">
       <nav className="flex justify-between items-center text-slate-900">
-        <div className="text-2xl font-bold">Logo</div>
+        <div className="text-2xl font-bold">
+          {" "}
+          <Image src="/amazing-logoo.png" alt="logo" width={40} height={40} />
+        </div>
         <ul className="flex space-x-5">
           <Link href="/" className="text-lg font-semibold">
             Home
           </Link>
-          <Link href="/about" className="text-lg font-semibold">
+          <Link href="/main/about" className="text-lg font-semibold">
             About
           </Link>
-          <Link href="/contact" className="text-lg font-semibold">
+
+          <Link href="/main/contact" className="text-lg font-semibold">
             Contact
           </Link>
         </ul>
