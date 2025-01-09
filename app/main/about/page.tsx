@@ -19,11 +19,14 @@ export default function About() {
           <div className="flex flex-col items-center md:items-start space-y-6">
             <h2 className="text-2xl font-semibold text-gray-800">Who Am I?</h2>
             <p className="text-lg text-gray-700">
-              I am a full-stack software engineer with experience in designing
-              and developing web applications. I specialize in front-end
-              frameworks like React, Next.js, and backend technologies like
-              Node.js. I am passionate about creating user-friendly interfaces
-              and efficient, scalable server-side applications.
+              I am a full-stack developer,mobile app developer ,graphics
+              designer,video editor software engineer with experience in
+              designing and developing web applications ,mobile applications,
+              graphics and many more. I specialize in front-end frameworks like
+              React, Next.js,Laravel,Angular and many frontend framework and
+              backend technologies like Djanjo,php,Node.js. I am passionate
+              about creating user-friendly interfaces and efficient, scalable
+              server-side applications.
             </p>
             <p className="text-lg text-gray-700">
               When I'm not coding, I enjoy contributing to open-source projects,
@@ -43,6 +46,18 @@ export default function About() {
                 JavaScript, TypeScript
               </li>
               <li className="flex items-center text-lg text-gray-700">
+                <span className="w-6 h-6 mr-2 bg-blue-500 rounded-full text-white text-center">
+                  🛠
+                </span>{" "}
+                php, Laravel
+              </li>
+              <li className="flex items-center text-lg text-gray-700">
+                <span className="w-6 h-6 mr-2 bg-green-500 rounded-full text-white text-center">
+                  🛠
+                </span>{" "}
+                ReactNative, Flutter, Swift
+              </li>
+              <li className="flex items-center text-lg text-gray-700">
                 <span className="w-6 h-6 mr-2 bg-green-500 rounded-full text-white text-center">
                   🛠
                 </span>{" "}
@@ -52,13 +67,13 @@ export default function About() {
                 <span className="w-6 h-6 mr-2 bg-yellow-500 rounded-full text-white text-center">
                   🛠
                 </span>{" "}
-                Node.js, Express.js
+                Node.js, Express.js, Django, Flask
               </li>
               <li className="flex items-center text-lg text-gray-700">
                 <span className="w-6 h-6 mr-2 bg-red-500 rounded-full text-white text-center">
                   🛠
                 </span>{" "}
-                MongoDB, PostgreSQL
+                MongoDB, PostgreSQL, MySQL, Firebase
               </li>
               <li className="flex items-center text-lg text-gray-700">
                 <span className="w-6 h-6 mr-2 bg-purple-500 rounded-full text-white text-center">

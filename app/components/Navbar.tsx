@@ -2,11 +2,13 @@
 
 import { auth, signOut } from "@/app/auth";
 import { Button } from "@radix-ui/themes";
+import { Session } from "next-auth";
 import Image from "next/image";
 import Link from "next/link";
+
 import { useEffect, useState } from "react";
 const Navbar = () => {
-  const [session, setSession] = useState();
+  const [session, setSession] = useState<Session | null>(null);
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -17,7 +19,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <header className="px-5 py-3 shadow-sm bg-slate-100">
+    <header className="px-5 py-3 shadow-sm bg-slate-300">
       <nav className="flex justify-between items-center text-slate-900">
         <div className="text-2xl font-bold">
           {" "}
@@ -34,7 +36,7 @@ const Navbar = () => {
           <Link href="/main/contact" className="text-lg font-semibold">
             Contact
           </Link>
-          <Link href="/" className="text-lg font-semibold">
+          <Link href="/main/home" className="text-lg font-semibold">
             Home
           </Link>
           <Link href="/main/about" className="text-lg font-semibold">

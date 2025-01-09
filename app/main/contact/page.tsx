@@ -93,7 +93,7 @@ export default function Contact() {
                 onChange={handleChange}
                 rows={4}
                 className="block w-full px-4 py-3 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-lg"
-                placeholder="Your Message"
+                placeholder="Type Your Message here ..."
               ></textarea>
             </div>
           </div>

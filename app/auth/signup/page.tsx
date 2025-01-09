@@ -2,23 +2,33 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+type SignupResponse = {
+  error?: string;
+  message?: string;
+};
 
 const SignUp = () => {
-  const [username, setFullName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
   const [errors, setErrors] = useState<{
     username?: string;
     email?: string;
     password?: string;
     confirmPassword?: string;
   }>({});
-  const [loading, setLoading] = useState(false);
-  const [serverError, setServerError] = useState<string | null>(null);
+
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (loading) return; // Prevent duplicate submissions
 
     const formErrors: {
       username?: string;
@@ -28,7 +38,7 @@ const SignUp = () => {
     } = {};
 
     // Validation
-    if (!username) formErrors.username = "Full Name is required";
+    if (!username) formErrors.username = "Username is required";
     if (!email) formErrors.email = "Email is required";
     if (!password) formErrors.password = "Password is required";
     if (password !== confirmPassword)
@@ -42,7 +52,6 @@ const SignUp = () => {
     setLoading(true);
     setServerError(null);
 
-    // Send request to the API route
     try {
       const res = await fetch("/api/auth/signup", {
         method: "POST",
@@ -56,19 +65,23 @@ const SignUp = () => {
         }),
       });
 
-      const data = await res.json();
+      const data: SignupResponse = await res.json();
 
       if (res.ok) {
-        // Successfully created user, redirect or show success message
-        console.log("User created", data);
-        // Optionally, you can redirect to the login page or show a success message
+        console.log("User created successfully:", data);
+        // Clear form fields
+        setUsername("");
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+        // Redirect to login page
+        router.push("/auth/loginForm");
       } else {
-        // Handle errors from the API
-        setServerError(data.error || "Something went wrong");
+        setServerError(data.error || "An error occurred. Please try again.");
       }
     } catch (error) {
       setServerError("Error connecting to the server");
-      console.error("Error submitting form", error);
+      console.error("Error submitting form:", error);
     } finally {
       setLoading(false);
     }
@@ -81,22 +94,22 @@ const SignUp = () => {
           Sign Up
         </h2>
         {serverError && (
-          <p className="text-red-500 text-center">{serverError}</p>
+          <p className="text-red-500 text-center mt-4">{serverError}</p>
         )}
         <form onSubmit={handleSubmit} className="mt-6 space-y-6">
-          {/* Full Name */}
+          {/* Username */}
           <div>
             <label
               htmlFor="username"
               className="block text-sm font-medium text-gray-600"
             >
-              Full Name
+              Username
             </label>
             <input
               id="username"
               type="text"
               value={username}
-              onChange={(e) => setFullName(e.target.value)}
+              onChange={(e) => setUsername(e.target.value)}
               className="mt-1 block w-full px-4 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
             {errors.username && (
@@ -174,11 +187,9 @@ const SignUp = () => {
               {loading ? "Signing Up..." : "Sign Up"}
             </button>
             <div className="mt-4 text-center">
-              <Link
-                href="/auth/loginForm"
-                className="text-blue-600 hover:text-blue-800"
-              >
-                Already have an account? Login
+              <Link href="/auth/loginForm" className="text-blue-600">
+                Already have an account?
+                <span className="hover:text-green-400"> Login</span>
               </Link>
             </div>
           </div>

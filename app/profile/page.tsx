@@ -7,11 +7,7 @@ const SignInWithButton = ({ provider }: { provider: string }) => (
       "use server";
       await signIn(provider);
     }}
-  >
-    <button type="submit" className="btn btn-success">
-      Sign in with {provider}
-    </button>
-  </form>
+  ></form>
 );
 
 export default async function SignIn() {
@@ -21,7 +17,6 @@ export default async function SignIn() {
 
   return user ? (
     <>
-      <h2 className="text-3xl">Welcome {user.email}</h2>
       <form
         action={async () => {
           "use server";
@@ -35,7 +30,6 @@ export default async function SignIn() {
     </>
   ) : (
     <>
-      <h2>You are not authenticated. Click the sign-in button below.</h2>
       <SignInWithButton provider="google" />
       <SignInWithButton provider="github" />
     </>

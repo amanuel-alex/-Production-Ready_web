@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { FaXTwitter, FaGoogle, FaGithub } from "react-icons/fa6";
+import { signIn } from "next-auth/react";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -9,12 +11,10 @@ export default function Login() {
     {}
   );
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formErrors: { email?: string; password?: string } = {};
-
-    // Basic validation
     if (!email) formErrors.email = "Email is required";
     if (!password) formErrors.password = "Password is required";
 
@@ -23,8 +23,13 @@ export default function Login() {
       return;
     }
 
-    // Here, you can integrate API logic to log the user in
-    console.log("Form submitted");
+    try {
+      // Here, you should replace this with actual API logic
+      console.log("Logging in with:", { email, password });
+      // await loginUser(email, password); // Example function
+    } catch (error) {
+      setErrors({ email: "Invalid email or password" });
+    }
   };
 
   return (
@@ -101,22 +106,30 @@ export default function Login() {
             Forgot Password?
           </Link>
         </div>
+
         <p className="flex justify-center text-green-600">
-          ----- Login with ----
+          ----- Login with -----
         </p>
-        {/* Third-party Authentication Options */}
-        <div
-          className="mt-4 
-         flex justify-center"
-        >
-          <button className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-500 flex items-center justify-center mr-3">
-            <span> Google</span>
+
+        {/* Third-Party Authentication */}
+        <div className="mt-4 flex justify-center space-x-3">
+          <button
+            onClick={() => signIn("google")}
+            className="w-min p-8 bg-slate-900 text-white py-2 rounded-md hover:bg-slate-700"
+          >
+            <FaGoogle />
           </button>
-          <button className="w-full bg-blue-400 text-white py-2 rounded-md hover:bg-blue-500 flex items-center justify-center mr-3">
-            <span> Twitter</span>
+          <button
+            onClick={() => signIn("github")}
+            className="w-min p-8 bg-slate-900 text-white py-2 rounded-md hover:bg-slate-700"
+          >
+            <FaGithub />
           </button>
-          <button className="w-full bg-gray-800 text-white py-2 rounded-md hover:bg-gray-500 flex items-center justify-center mr-3">
-            <span> GitHub</span>
+          <button
+            onClick={() => signIn("Twitter")}
+            className="w-min p-8 bg-slate-900 text-white py-2 rounded-md hover:bg-slate-700"
+          >
+            <FaXTwitter />
           </button>
         </div>
       </div>
