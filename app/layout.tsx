@@ -1,17 +1,18 @@
+import { SessionProvider } from "next-auth/react";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import "@radix-ui/themes/styles.css";
-import { Theme } from "@radix-ui/themes";
 import Navbar from "./components/Navbar";
 import FooterPage from "./components/Footer";
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const robotoMono = Roboto_Mono({
+  variable: "--font-roboto-mono",
   subsets: ["latin"],
 });
 
@@ -19,6 +20,7 @@ export const metadata: Metadata = {
   title: "production ready",
   description: "ecommerce platform",
 };
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -26,14 +28,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Theme>
+      <body className={`${inter.variable} ${robotoMono.variable} antialiased`}>
+        <SessionProvider>
           <Navbar />
           {children}
           <FooterPage />
-        </Theme>
+        </SessionProvider>
       </body>
     </html>
   );

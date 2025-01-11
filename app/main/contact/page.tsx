@@ -1,39 +1,67 @@
 "use client";
-import { useState } from "react";
 
-export default function Contact() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import emailjs from "@emailjs/browser";
+
+const ContactForm = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(
+      z.object({
+        email: z.string().email({ message: "Invalid email address" }),
+        username: z
+          .string()
+          .min(3, { message: "Username must be at least 3 characters" }),
+        message: z
+          .string()
+          .min(10, { message: "Message must be at least 10 characters" }),
+      })
+    ),
   });
 
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
   interface FormData {
-    name: string;
+    username: string;
     email: string;
     message: string;
   }
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ): void => {
-    const { name, value } = e.target;
-    setFormData((prevData: FormData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  interface TemplateParams extends Record<string, unknown> {
+    from_name: string;
+    from_email: string;
+    message: string;
+  }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
-    e.preventDefault();
-    // Handle form submission logic
-    console.log(formData);
-    alert("Form submitted!");
-    setFormData({
-      name: "",
-      email: "",
-      message: "",
-    });
+  const onSubmit = async (data: FormData) => {
+    try {
+      const templateParams: TemplateParams = {
+        from_name: data.username,
+        from_email: data.email,
+        message: data.message,
+      };
+
+      await emailjs.send(
+        "service_n24me0o", // Replace with your service ID
+        "template_nqdhd71", // Replace with your template ID
+        templateParams,
+        "tlcHL57aJAl-kwf3w" // Replace with your user ID
+      );
+
+      setSuccessMessage("Message sent successfully!");
+      setErrorMessage("");
+    } catch (error) {
+      console.error("Error sending email:", error);
+      setErrorMessage("An error occurred while sending your message.");
+      setSuccessMessage("");
+    }
   };
 
   return (
@@ -42,27 +70,22 @@ export default function Contact() {
         <h2 className="text-4xl font-semibold text-center text-gray-800">
           Contact Us
         </h2>
-        <form
-          onSubmit={handleSubmit}
-          className="mt-8 space-y-6"
-          action="#"
-          method="POST"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-6">
           <div className="space-y-4">
             <div>
-              <label htmlFor="name" className="sr-only">
-                Name
+              <label htmlFor="username" className="sr-only">
+                Username
               </label>
               <input
-                id="name"
-                name="name"
+                id="username"
                 type="text"
-                required
-                value={formData.name}
-                onChange={handleChange}
+                {...register("username")}
                 className="block w-full px-4 py-3 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-lg"
-                placeholder="Your Name"
+                placeholder="Your Username"
               />
+              {errors.username && (
+                <p className="text-red-500">{errors.username.message}</p>
+              )}
             </div>
 
             <div>
@@ -71,14 +94,14 @@ export default function Contact() {
               </label>
               <input
                 id="email"
-                name="email"
                 type="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
+                {...register("email")}
                 className="block w-full px-4 py-3 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-lg"
                 placeholder="Your Email"
               />
+              {errors.email && (
+                <p className="text-red-500">{errors.email.message}</p>
+              )}
             </div>
 
             <div>
@@ -87,14 +110,14 @@ export default function Contact() {
               </label>
               <textarea
                 id="message"
-                name="message"
-                required
-                value={formData.message}
-                onChange={handleChange}
+                {...register("message")}
                 rows={4}
                 className="block w-full px-4 py-3 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-lg"
                 placeholder="Type Your Message here ..."
               ></textarea>
+              {errors.message && (
+                <p className="text-red-500">{errors.message.message}</p>
+              )}
             </div>
           </div>
 
@@ -106,8 +129,13 @@ export default function Contact() {
               Submit
             </button>
           </div>
+
+          {successMessage && <p className="text-green-500">{successMessage}</p>}
+          {errorMessage && <p className="text-red-500">{errorMessage}</p>}
         </form>
       </div>
     </div>
   );
-}
+};
+
+export default ContactForm;

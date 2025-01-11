@@ -64,10 +64,16 @@ const Navbar = () => {
             </>
           ) : (
             <div className="flex space-x-5 cursor-pointer">
-              <Link href="/auth/signup">
+              <Link
+                href="/auth/signup"
+                className=" border-t-2 border-b-2 border-green-400 border-t-cyan-400 rounded-md p-2"
+              >
                 <Button variant="soft">Sign up</Button>
               </Link>
-              <Link href="/auth/login">
+              <Link
+                href="/auth/login"
+                className=" border-t-2 border-b-2 border-green-400 border-t-cyan-400 rounded-md p-2"
+              >
                 <Button variant="soft">Login</Button>
               </Link>
             </div>

@@ -14,6 +14,8 @@
     "react-dom": "$react-dom"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
+    "@geist-ui/react": "^2.2.5",
     "@hookform/resolvers": "^3.10.0",
     "@prisma/client": "^6.2.1",
     "@radix-ui/themes": "^3.1.6",

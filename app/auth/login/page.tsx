@@ -113,7 +113,7 @@ export default function Login() {
           <div>
             <button
               type="submit"
-              className={`w-full bg-red-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-300 ${
+              className={`w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-300 ${
                 isLoading ? "cursor-not-allowed" : ""
               }`}
               disabled={isLoading}
@@ -145,25 +145,25 @@ export default function Login() {
         </p>
 
         {/* Third-Party Authentication */}
-        <div className="mt-4 flex justify-center space-x-3">
-          <Button
+        <div className="mt-4 flex justify-center space-x-3  p-4">
+          <button
             onClick={() => signIn("google")}
-            className="w-min p-8 bg-slate-900 text-white py-2 rounded-md hover:bg-slate-700"
+            className="w-min p-4 bg-slate-900 text-white  rounded-md hover:bg-slate-700"
           >
             <FaGoogle />
-          </Button>
-          <Button
+          </button>
+          <button
             onClick={() => signIn("github")}
-            className="w-min p-8 bg-slate-900 text-white py-2 rounded-md hover:bg-slate-700"
+            className="w-min p-4 bg-slate-900 text-white py-2 rounded-md hover:bg-slate-700"
           >
             <FaGithub />
-          </Button>
-          <Button
+          </button>
+          <button
             onClick={() => signIn("Twitter")}
-            className="w-min p-8 bg-slate-900 text-white py-2 rounded-md hover:bg-slate-700"
+            className="w-min p-4  bg-slate-900 text-white py-2 rounded-md hover:bg-slate-700"
           >
             <FaXTwitter />
-          </Button>
+          </button>
         </div>
       </div>
     </div>
