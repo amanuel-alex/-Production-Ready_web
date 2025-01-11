@@ -1,89 +1,65 @@
 "use client";
-
-import { useState } from "react";
-import Link from "next/link";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import Link from "next/link";
+import axios from "axios";
+const SignupSchema = z
+  .object({
+    username: z
+      .string()
+      .min(3, { message: "Username must be at least 3 characters" }),
+    email: z.string().email({ message: "Invalid email address" }),
+    password: z
+      .string()
+      .min(6, { message: "Password must be at least 6 characters" }),
+    confirmPassword: z
+      .string()
+      .min(6, { message: "Password must be at least 6 characters" }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords must match",
+    path: ["confirmPassword"], // path of error
+  });
 
-type SignupResponse = {
-  error?: string;
-  message?: string;
-};
-
-const SignUp = () => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [serverError, setServerError] = useState<string | null>(null);
-  const [errors, setErrors] = useState<{
-    username?: string;
-    email?: string;
-    password?: string;
-    confirmPassword?: string;
-  }>({});
-
+const Signup = () => {
   const router = useRouter();
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(SignupSchema),
+  });
 
-    if (loading) return; // Prevent duplicate submissions
-
-    const formErrors: {
-      username?: string;
-      email?: string;
-      password?: string;
-      confirmPassword?: string;
-    } = {};
-
-    // Validation
-    if (!username) formErrors.username = "Username is required";
-    if (!email) formErrors.email = "Email is required";
-    if (!password) formErrors.password = "Password is required";
-    if (password !== confirmPassword)
-      formErrors.confirmPassword = "Passwords do not match";
-
-    if (Object.keys(formErrors).length > 0) {
-      setErrors(formErrors);
-      return;
-    }
-
-    setLoading(true);
-    setServerError(null);
-
+  const onSubmit = async (data: any) => {
+    setIsLoading(true);
     try {
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          email,
-          password,
-        }),
+      const response: Response = await axios("/api/signup", {
+        method: "post",
+        headers: { "Content-Type": "application/json" },
       });
 
-      const data: SignupResponse = await res.json();
-
-      if (res.ok) {
-        console.log("User created successfully:", data);
-        // Clear form fields
-        setUsername("");
-        setEmail("");
-        setPassword("");
-        setConfirmPassword("");
-        // Redirect to login page
-        router.push("/auth/loginForm");
-      } else {
-        setServerError(data.error || "An error occurred. Please try again.");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Signup failed");
       }
+
+      router.push("/");
     } catch (error) {
-      setServerError("Error connecting to the server");
-      console.error("Error submitting form:", error);
+      console.error("Signup failed:", error);
+      if (error instanceof Error) {
+        setServerError(error.message || "Signup failed");
+      } else {
+        setServerError("Signup failed");
+      }
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -94,9 +70,9 @@ const SignUp = () => {
           Sign Up
         </h2>
         {serverError && (
-          <p className="text-red-500 text-center mt-4">{serverError}</p>
+          <p className="text-red-500 text-center">{serverError}</p>
         )}
-        <form onSubmit={handleSubmit} className="mt-6 space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-6">
           {/* Username */}
           <div>
             <label
@@ -108,12 +84,15 @@ const SignUp = () => {
             <input
               id="username"
               type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
               className="mt-1 block w-full px-4 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              {...register("username")}
             />
             {errors.username && (
-              <p className="text-sm text-red-500">{errors.username}</p>
+              <p className="text-sm text-red-500">
+                {typeof errors.username?.message === "string"
+                  ? errors.username.message
+                  : ""}
+              </p>
             )}
           </div>
 
@@ -128,12 +107,15 @@ const SignUp = () => {
             <input
               id="email"
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
               className="mt-1 block w-full px-4 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              {...register("email")}
             />
             {errors.email && (
-              <p className="text-sm text-red-500">{errors.email}</p>
+              <p className="text-sm text-red-500">
+                {typeof errors.email?.message === "string"
+                  ? errors.email.message
+                  : ""}
+              </p>
             )}
           </div>
 
@@ -148,12 +130,15 @@ const SignUp = () => {
             <input
               id="password"
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
               className="mt-1 block w-full px-4 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              {...register("password")}
             />
             {errors.password && (
-              <p className="text-sm text-red-500">{errors.password}</p>
+              <p className="text-sm text-red-500">
+                {typeof errors.password?.message === "string"
+                  ? errors.password.message
+                  : ""}
+              </p>
             )}
           </div>
 
@@ -168,12 +153,15 @@ const SignUp = () => {
             <input
               id="confirmPassword"
               type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
               className="mt-1 block w-full px-4 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              {...register("confirmPassword")}
             />
             {errors.confirmPassword && (
-              <p className="text-sm text-red-500">{errors.confirmPassword}</p>
+              <p className="text-sm text-red-500">
+                {typeof errors.confirmPassword?.message === "string"
+                  ? errors.confirmPassword.message
+                  : ""}
+              </p>
             )}
           </div>
 
@@ -181,15 +169,19 @@ const SignUp = () => {
           <div>
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-300"
-              disabled={loading}
+              className={`w-full text-white py-2 rounded-md transition duration-300 ${
+                isLoading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700"
+              }`}
+              disabled={isLoading}
             >
-              {loading ? "Signing Up..." : "Sign Up"}
+              {isLoading ? "Signing Up..." : "Sign Up"}
             </button>
             <div className="mt-4 text-center">
               <Link href="/auth/loginForm" className="text-blue-600">
-                Already have an account?
-                <span className="hover:text-green-400"> Login</span>
+                Already have an account?{" "}
+                <span className="hover:text-green-400">Login</span>
               </Link>
             </div>
           </div>
@@ -199,4 +191,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default Signup;

@@ -21,7 +21,6 @@ export default async function handler(
     }
 
     try {
-      // Check if the user exists in the database
       const user = await prisma.user.findUnique({
         where: { email },
       });
@@ -30,14 +29,12 @@ export default async function handler(
         return res.status(400).json({ error: "Invalid credentials." });
       }
 
-      // Compare the hashed password with the input password
       const passwordMatch = await bcrypt.compare(password, user.password);
 
       if (!passwordMatch) {
         return res.status(400).json({ error: "Invalid credentials." });
       }
 
-      // Return user information without password
       const { password: _, ...userWithoutPassword } = user;
 
       console.log("Login successful for user:", userWithoutPassword);

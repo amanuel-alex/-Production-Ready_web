@@ -3,7 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { FaXTwitter, FaGoogle, FaGithub } from "react-icons/fa6";
 import { signIn } from "next-auth/react";
-
+import { Button } from "@radix-ui/themes";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -113,24 +113,24 @@ export default function Login() {
 
         {/* Third-Party Authentication */}
         <div className="mt-4 flex justify-center space-x-3">
-          <button
+          <Button
             onClick={() => signIn("google")}
             className="w-min p-8 bg-slate-900 text-white py-2 rounded-md hover:bg-slate-700"
           >
             <FaGoogle />
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => signIn("github")}
             className="w-min p-8 bg-slate-900 text-white py-2 rounded-md hover:bg-slate-700"
           >
             <FaGithub />
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => signIn("Twitter")}
             className="w-min p-8 bg-slate-900 text-white py-2 rounded-md hover:bg-slate-700"
           >
             <FaXTwitter />
-          </button>
+          </Button>
         </div>
       </div>
     </div>

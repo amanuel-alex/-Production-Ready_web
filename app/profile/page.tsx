@@ -12,7 +12,7 @@ const SignInWithButton = ({ provider }: { provider: string }) => (
 
 export default async function SignIn() {
   const session = await auth();
-  console.log(session);
+
   const user = session?.user;
 
   return user ? (
