@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Link from "next/link";
 import axios from "axios";
+
 const SignupSchema = z
   .object({
     username: z
@@ -21,7 +22,7 @@ const SignupSchema = z
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords must match",
-    path: ["confirmPassword"], // path of error
+    path: ["confirmPassword"],
   });
 
 const Signup = () => {
@@ -40,17 +41,15 @@ const Signup = () => {
   const onSubmit = async (data: any) => {
     setIsLoading(true);
     try {
-      const response: Response = await axios("/api/signup", {
-        method: "post",
+      const response = await axios.post("/api/signup", data, {
         headers: { "Content-Type": "application/json" },
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Signup failed");
+      if (response.status !== 201) {
+        throw new Error(response.data.error || "Signup failed");
       }
 
-      router.push("/");
+      router.push("/auth/login");
     } catch (error) {
       console.error("Signup failed:", error);
       if (error instanceof Error) {

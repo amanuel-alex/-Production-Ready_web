@@ -4,31 +4,56 @@ import Link from "next/link";
 import { FaXTwitter, FaGoogle, FaGithub } from "react-icons/fa6";
 import { signIn } from "next-auth/react";
 import { Button } from "@radix-ui/themes";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const LoginSchema = z.object({
+  email: z.string().email({ message: "Invalid email address" }),
+  password: z
+    .string()
+    .min(6, { message: "Password must be at least 6 characters" }),
+});
+
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>(
-    {}
-  );
+  const router = useRouter();
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(LoginSchema),
+  });
 
-    const formErrors: { email?: string; password?: string } = {};
-    if (!email) formErrors.email = "Email is required";
-    if (!password) formErrors.password = "Password is required";
-
-    if (Object.keys(formErrors).length > 0) {
-      setErrors(formErrors);
-      return;
-    }
-
+  const onSubmit = async (data: any) => {
+    setIsLoading(true);
     try {
-      // Here, you should replace this with actual API logic
-      console.log("Logging in with:", { email, password });
-      // await loginUser(email, password); // Example function
+      const response = await axios.post("/api/login", data, {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (response.status !== 200) {
+        throw new Error(response.data.error || "Login failed");
+      }
+
+      // Save the token in localStorage or cookies
+      localStorage.setItem("token", response.data.token);
+
+      router.push("/main/about"); // Redirect to a protected route
     } catch (error) {
-      setErrors({ email: "Invalid email or password" });
+      console.error("Login failed:", error);
+      if (error instanceof Error) {
+        setServerError(error.message || "Login failed");
+      } else {
+        setServerError("Login failed");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -38,7 +63,10 @@ export default function Login() {
         <h2 className="text-3xl font-semibold text-center text-gray-800">
           Login
         </h2>
-        <form onSubmit={handleSubmit} className="mt-6 space-y-6">
+        {serverError && (
+          <p className="text-red-500 text-center">{serverError}</p>
+        )}
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-6">
           {/* Email Field */}
           <div>
             <label
@@ -50,12 +78,13 @@ export default function Login() {
             <input
               id="email"
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              {...register("email")}
               className="mt-1 block w-full px-4 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
             {errors.email && (
-              <p className="text-sm text-red-500">{errors.email}</p>
+              <p className="text-sm text-red-500">
+                {errors.email?.message as string}
+              </p>
             )}
           </div>
 
@@ -70,12 +99,13 @@ export default function Login() {
             <input
               id="password"
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              {...register("password")}
               className="mt-1 block w-full px-4 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
             {errors.password && (
-              <p className="text-sm text-red-500">{errors.password}</p>
+              <p className="text-sm text-red-500">
+                {errors.password?.message as string}
+              </p>
             )}
           </div>
 
@@ -83,9 +113,12 @@ export default function Login() {
           <div>
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-300"
+              className={`w-full bg-red-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-300 ${
+                isLoading ? "cursor-not-allowed" : ""
+              }`}
+              disabled={isLoading}
             >
-              Login
+              {isLoading ? "Logging in..." : "Login"}
             </button>
           </div>
         </form>

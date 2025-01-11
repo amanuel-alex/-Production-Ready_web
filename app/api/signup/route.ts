@@ -1,46 +1,44 @@
-// app/api/signup/route.js
-import { NextApiRequest, NextApiResponse } from "next";
-import prisma from "../../lib/prisma";
+// app/api/signup/route.ts
+
+import { NextRequest, NextResponse } from "next/server";
+import prisma from "../../lib/prisma"; // Adjust the import path if necessary
 import bcrypt from "bcryptjs";
-import { User } from "@prisma/client";
-import { handlers } from "../../auth";
 
-export const { GET, POST } = handlers;
+export async function POST(req: NextRequest) {
+  try {
+    const { username, email, password } = await req.json();
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method === "POST") {
-    const { username, email, password } = req.body;
-
-    try {
-      const saltRounds = 10;
-      const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-      const user: User = await prisma.user.create({
-        data: {
-          username,
-          email,
-          password: hashedPassword,
-        },
-      });
-
-      res.status(201).json({ message: "User created successfully" });
-    } catch (error) {
-      console.error("Signup failed:", error);
-
-      // Handle specific errors (example)
-      if (
-        error instanceof Error &&
-        error.message.includes("email-already-in-use")
-      ) {
-        res.status(400).json({ error: "Email is already in use" });
-      } else {
-        res.status(500).json({ error: "Signup failed" });
-      }
+    if (!username || !email || !password) {
+      return NextResponse.json(
+        { error: "All fields (username, email, password) are required" },
+        { status: 400 }
+      );
     }
-  } else {
-    res.status(405).end(); // Method Not Allowed
+
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      return NextResponse.json(
+        { error: "Email already in use" },
+        { status: 400 }
+      );
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    const user = await prisma.user.create({
+      data: {
+        username,
+        email,
+        password: hashedPassword,
+      },
+    });
+
+    return NextResponse.json(user, { status: 201 });
+  } catch (error) {
+    console.error("Error creating user:", error);
+    return NextResponse.json({ error: "Error creating user" }, { status: 500 });
   }
 }

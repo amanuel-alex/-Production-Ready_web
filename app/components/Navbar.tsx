@@ -67,7 +67,7 @@ const Navbar = () => {
               <Link href="/auth/signup">
                 <Button variant="soft">Sign up</Button>
               </Link>
-              <Link href="/auth/loginForm">
+              <Link href="/auth/login">
                 <Button variant="soft">Login</Button>
               </Link>
             </div>
